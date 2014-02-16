@@ -40,7 +40,6 @@ my $band = undef;
 my $mode = undef;
 my @bands = ("630m", "160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m", "6m", "2m", "70cm");
 my @modes = ("SSB", "CW", "RTTY", "PSK31", "AM", "PHONE", "DATA");
-my @commands = ("date", "band", "mode", "help");
 my @qsos;
 my $quiet = undef;
 
