@@ -96,11 +96,11 @@ mode cw
 mode set: cw
 1204 w1aw 579
 qso: 2010-11-30 1204 w1aw 20m cw 579
-$ head -3 output.txt
+$ cat output.txt
 <ADIF_VER:4>1.00
 <EOH>
-<QSO_DATE:8>20101130 <TIME_ON:4>1204 <CALL:4>W1AW <BAND:3>20M <MODE:2>CW
-<RST_SENT:3>579
+<QSO_DATE:8>20101130 <TIME_ON:4>1204 <CALL:4>W1AW <BAND:3>20M <MODE:2>CW <RST_SENT:3>579
+<EOR>
 ```
 
 ## Known problems
