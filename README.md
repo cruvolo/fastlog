@@ -16,7 +16,7 @@ differs from DL3CB's FLE syntax).
 band <wavelength>
 ```
 Sets the band for new entries.  Accepted bands: 630m, 160m, 80m, 60m, 40m, 30m,
-20m, 17m, 15m, 12m, 10m, 6, 2m, 70cm.  Note that the 'm' can be omitted, except
+20m, 17m, 15m, 12m, 10m, 6m, 4m, 2m, 70cm.  Note that the 'm' can be omitted, except
 for 70cm.
 
 ```
