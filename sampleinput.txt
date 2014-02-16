@@ -1,4 +1,4 @@
-date 30-11-2010
+date 2010-11-30
 band 20
 mode cw
 2347 df3cb
@@ -6,7 +6,7 @@ mode cw
 dj2mx
 51 dl4mcf 579 @559 #Good contact
 
-date 01-12-2010
+date 2010-12-01
 band 15
 mode ssb
 0005 dh1tw
