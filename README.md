@@ -36,7 +36,7 @@ enters "3 W1AW", the timestamp will be updated to "2313" for the W1AW qso.
 If a RST is omitted, "599" is used as a default, or "59" if the qso is for SSB
 mode.
 
-## Execution
+## execution
 
 The script accepts a -q or --quiet option.  It can be run interactively or
 reading a file.
@@ -103,7 +103,7 @@ $ cat output.txt
 <EOR>
 ```
 
-## Known problems
+## known issues
 
 * very little error checking / validity testing
 
