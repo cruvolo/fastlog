@@ -32,6 +32,10 @@
 # policies, either expressed or implied, of Chris Ruvolo.
 
 use strict;
+use utf8;
+use feature 'unicode_strings';
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use POSIX qw(strftime);
 
 my $date = strftime("%Y-%m-%d", gmtime);
@@ -85,10 +89,18 @@ while (<>) {
 
 		if (!defined($band)) {
 			print STDERR "error: band must be set.\n";
+			next;
 		}
 		if (!defined($mode)) {
 			print STDERR "error: mode must be set.\n";
+			next;
 		}
+
+		if (! ($call =~ /^\s*(\d?[a-z]{1,2}[0-9Øø]{1,4}[a-z]{1,4})\s*$/i)) {
+			print STDERR "error: invalid callsign: $call\n";
+			next;
+		}
+		$call =~ s/[Øø]/0/g;
 
 		$time = substr($time,0,4-length($timefrag)) . $timefrag;
 		if (uc($mode) eq "SSB") {
