@@ -11,3 +11,5 @@ band 15
 mode ssb
 0005 dh1tw
 
+0007 w1aw
+delete

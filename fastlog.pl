@@ -74,6 +74,11 @@ while (<>) {
 			$mode = $tmp;
 			print STDERR "mode set: $mode\n" unless defined($quiet);
 		}
+	} elsif (/\s*(delete|drop|error)/i) {
+		my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $comment) =
+			split(/\|/, pop(@qsos));
+		print STDERR "deleted qso: $date $time $call $band $mode\n"
+			unless defined($quiet);
 	} elsif (/^(\d{0,4})?\s*(\w{3,})\s*(\d{2,3})?\s*(@\d{2,3})?\s*(#.*)?$/) {
 		# 51 dl4mcf 579 @559 #good contact
 		# 1: 51

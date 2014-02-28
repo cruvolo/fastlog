@@ -27,6 +27,14 @@ PHONE, DATA.  Case insensitive.  Note that the use of the "mode" keyword
 differs from DL3CB's FLE syntax.
 
 ```
+delete
+drop
+error
+```
+
+Removes the last qso logged.
+
+```
 [time fragment] <callsign> [sent rst] [@received rst] [#comment]
 ```
 Adds a QSO entry to the log.  Time fragment adjusts the rightmost bits of the
@@ -70,6 +78,8 @@ date set: 2010-12-01
 band set: 15m
 mode set: ssb
 qso: 2010-12-01 0005 dh1tw 15m ssb 59
+qso: 2010-12-01 0007 w1aw 15m ssb 59
+deleted qso: 2010-12-01 0007 w1aw 15m ssb
 <ADIF_VER:4>1.00
 <EOH>
 <QSO_DATE:8>20101130 <TIME_ON:4>2347 <CALL:5>DF3CB <BAND:3>20M <MODE:2>CW <RST_SENT:3>599
