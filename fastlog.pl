@@ -124,6 +124,7 @@ while (<>) {
 }
 
 # output as adif
+print "Log file transcribed by fastlog. https://github.com/cruvolo/fastlog\n";
 print "<ADIF_VER:4>1.00\n<EOH>\n";
 foreach(@qsos) {
 	#print "$_\n";
