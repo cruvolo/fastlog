@@ -51,6 +51,7 @@ reading a file.
 
 ```
 $ ./fastlog.pl -q sampleinput.txt
+Log file transcribed by fastlog. https://github.com/cruvolo/fastlog
 <ADIF_VER:4>1.00
 <EOH>
 <QSO_DATE:8>20101130 <TIME_ON:4>2347 <CALL:5>DF3CB <BAND:3>20M <MODE:2>CW <RST_SENT:3>599
@@ -80,6 +81,7 @@ mode set: ssb
 qso: 2010-12-01 0005 dh1tw 15m ssb 59
 qso: 2010-12-01 0007 w1aw 15m ssb 59
 deleted qso: 2010-12-01 0007 w1aw 15m ssb
+Log file transcribed by fastlog. https://github.com/cruvolo/fastlog
 <ADIF_VER:4>1.00
 <EOH>
 <QSO_DATE:8>20101130 <TIME_ON:4>2347 <CALL:5>DF3CB <BAND:3>20M <MODE:2>CW <RST_SENT:3>599
@@ -107,6 +109,7 @@ mode set: cw
 1204 w1aw 579
 qso: 2010-11-30 1204 w1aw 20m cw 579
 $ cat output.txt
+Log file transcribed by fastlog. https://github.com/cruvolo/fastlog
 <ADIF_VER:4>1.00
 <EOH>
 <QSO_DATE:8>20101130 <TIME_ON:4>1204 <CALL:4>W1AW <BAND:3>20M <MODE:2>CW <RST_SENT:3>579
