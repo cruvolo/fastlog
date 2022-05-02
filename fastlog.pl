@@ -58,6 +58,8 @@ while ($i <= $#ARGV) {
 
 while (<>) {
 	chomp;
+	next if (/^\s*#/);
+	next if (/^\s*$/);
 	if (/^\s*date\s+(\d{4}-\d{2}-\d{2})/i) {
 		$date = $1;
 		print STDERR "date set: $date\n" unless defined($quiet);
