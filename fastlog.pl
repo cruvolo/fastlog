@@ -93,6 +93,8 @@ while (<>) {
 		my $sentrst = $3;
 		my $myrst = $4;
 		my $comment = $5;
+		$comment =~ s/^#\s*/#/ if defined $comment;
+		$comment =~ s/\s*$// if defined $comment;
 
 		if (!defined($band)) {
 			print STDERR "error: band must be set.\n";
