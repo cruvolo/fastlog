@@ -4,6 +4,9 @@ fastlog
 A quick and dirty ham radio log transcription program, inspired by DL3CB's
 "FLE": http://df3cb.com/fle/
 
+Input is text, output is [ADIF log file format](https://www.adif.org/),
+compatible with [version 2.1.4](https://www.adif.org/adif214.htm).
+
 ## syntax
 
 ```
@@ -55,6 +58,20 @@ enters "3 W1AW", the timestamp will be updated to "2313" for the W1AW qso.
 If a RST is omitted, "599" is used as a default, or "59" if the qso is for SSB
 mode.
 
+## POTA support
+
+If a QSO comment has the designator `POTA <park number>` or `PTP <park number>`,
+then the data will be placed into the `SIG_INFO` ADIF field for compatibility
+with [Parks On the Air](https://pota.app/).
+
+Example:
+
+```
+1646 K5ALA  55 @58 # PTP K-3601
+  47 KE8SZL 59 @59 # PTP K-4316
+  48 KA1DMA 59 @55 # PTP K-1073
+```
+
 ## execution
 
 The script accepts a -q or --quiet option.  It can be run interactively or
@@ -63,7 +80,7 @@ reading a file.
 ```
 $ ./fastlog.pl -q sampleinput.txt
 Log file transcribed by fastlog. https://github.com/cruvolo/fastlog
-<ADIF_VER:4>1.00
+<ADIF_VER:5>2.1.4
 <EOH>
 <QSO_DATE:8>20101130 <TIME_ON:4>2347 <CALL:5>DF3CB <BAND:3>20M <MODE:2>CW <RST_SENT:3>599
 <EOR>
@@ -93,7 +110,7 @@ qso: 2010-12-01 0005 dh1tw 15m ssb 59
 qso: 2010-12-01 0007 w1aw 15m ssb 59
 deleted qso: 2010-12-01 0007 w1aw 15m ssb
 Log file transcribed by fastlog. https://github.com/cruvolo/fastlog
-<ADIF_VER:4>1.00
+<ADIF_VER:5>2.1.4
 <EOH>
 <QSO_DATE:8>20101130 <TIME_ON:4>2347 <CALL:5>DF3CB <BAND:3>20M <MODE:2>CW <RST_SENT:3>599
 <EOR>
@@ -121,7 +138,7 @@ mode set: cw
 qso: 2010-11-30 1204 w1aw 20m cw 579
 $ cat output.txt
 Log file transcribed by fastlog. https://github.com/cruvolo/fastlog
-<ADIF_VER:4>1.00
+<ADIF_VER:5>2.1.4
 <EOH>
 <QSO_DATE:8>20101130 <TIME_ON:4>1204 <CALL:4>W1AW <BAND:3>20M <MODE:2>CW <RST_SENT:3>579
 <EOR>

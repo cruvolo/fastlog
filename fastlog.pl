@@ -85,8 +85,7 @@ while (<>) {
 		$mycall = uc $1;
 		print STDERR "mycall set: $mycall\n" unless defined($quiet);
 	} elsif (/\s*(delete|drop|error)/i) {
-		my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $oper, $comment) =
-			split(/\|/, pop(@qsos));
+		my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $oper, $comment, $siginfo) = split(/\|/, pop(@qsos));
 		print STDERR "deleted qso: $date $time $call $band $mode\n"
 			unless defined($quiet);
 	} elsif (m|^\s*(\d{0,4})?\s*([A-Z0-9/]{3,})\s*(\d{2,3})?\s*(@\d{2,3})?\s*(#.*)?$|i) {
@@ -130,8 +129,13 @@ while (<>) {
 		$myrst =~ s/^@//;
 		$comment =~ s/^#//;
 
-		print STDERR "qso: $date $time $call $band $mode $sentrst $myrst $mycall $oper $comment\n" unless defined($quiet);
-		push(@qsos, join('|', $date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $oper, $comment));
+		my $siginfo = "";
+		if ($comment =~ m/(POTA|PTP)\s+([A-Z0-9]+-\d+)/) {
+		  $siginfo = $2;
+		}
+
+		print STDERR "qso: $date $time $call $band $mode $sentrst $myrst $mycall $oper $comment $siginfo\n" unless defined($quiet);
+		push(@qsos, join('|', $date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $oper, $comment, $siginfo));
 	} else {
 		print STDERR "unknown input: $_\n";
 	}
@@ -139,11 +143,10 @@ while (<>) {
 
 # output as adif
 print "Log file transcribed by fastlog. https://github.com/cruvolo/fastlog\n";
-print "<ADIF_VER:4>1.00\n<EOH>\n";
+print "<ADIF_VER:5>2.1.4\n<EOH>\n";
 foreach(@qsos) {
 	#print "$_\n";
-	my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $oper, $comment) =
-		split/\|/;
+	my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $oper, $comment, $siginfo) = split/\|/;
 	$date =~ s/-//g;
 	print "<QSO_DATE:8>", $date, " <TIME_ON:4>$time",
 	      " <CALL:", length(uc($call)), ">", uc($call),
@@ -153,6 +156,7 @@ foreach(@qsos) {
 	      (length $mycall==0)?"":(" <STATION_CALLSIGN:".length($mycall).">".$mycall),
 	      (length $oper==0)?"":(" <OPERATOR:".length($oper).">".$oper),
 	      (length($myrst)==0)?"":(" <RST_RCVD:".length($myrst).">".$myrst),
+	      (length($siginfo)==0)?"":(" <SIG_INFO:".length($siginfo).">".$siginfo),
 	      (length($comment)==0)?"":(" <COMMENT:".length($comment).">".$comment),
 	      "\n<EOR>\n";
 }
