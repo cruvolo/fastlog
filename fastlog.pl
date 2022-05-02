@@ -81,7 +81,7 @@ while (<>) {
 			split(/\|/, pop(@qsos));
 		print STDERR "deleted qso: $date $time $call $band $mode\n"
 			unless defined($quiet);
-	} elsif (/^(\d{0,4})?\s*(\w{3,})\s*(\d{2,3})?\s*(@\d{2,3})?\s*(#.*)?$/) {
+	} elsif (m|^\s*(\d{0,4})?\s*([A-Z0-9/]{3,})\s*(\d{2,3})?\s*(@\d{2,3})?\s*(#.*)?$|i) {
 		# 51 dl4mcf 579 @559 #good contact
 		# 1: 51
 		# 2: dl4mcf
@@ -105,7 +105,7 @@ while (<>) {
 			next;
 		}
 
-		if (! ($call =~ /^\s*(\d?[a-z]{1,2}[0-9Øø]{1,4}[a-z]{1,4})\s*$/i)) {
+		if (! ($call =~ m|^\s*([a-z]*[0-9]*/)?(\d?[a-z]{1,2}[0-9Øø]{1,4}[a-z]{1,4})(/[a-z]*[0-9]*)?\s*$|i)) {
 			print STDERR "error: invalid callsign: $call\n";
 			next;
 		}
