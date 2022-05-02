@@ -13,6 +13,11 @@ Sets the QSO date for new entries.  Note that this is ISO date format (this
 differs from DL3CB's FLE syntax).
 
 ```
+mycall <callsign>
+```
+Sets the callsign that was used on the air.
+
+```
 band <wavelength>
 ```
 Sets the band for new entries.  Accepted bands: 630m, 160m, 80m, 60m, 40m, 30m,
@@ -25,6 +30,12 @@ mode <mode>
 Sets the mode for new entries.  Accepted modes: SSB, CW, RTTY, PSK31, AM,
 PHONE, DATA.  Case insensitive.  Note that the use of the "mode" keyword
 differs from DL3CB's FLE syntax.
+
+```
+oper <callsign>
+```
+Sets the operator callsign.  Use this when running a multi-op station to
+indicate the control operator for the following QSOs.
 
 ```
 delete

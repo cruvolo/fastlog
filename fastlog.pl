@@ -42,6 +42,8 @@ my $date = strftime("%Y-%m-%d", gmtime);
 my $time = strftime("%H%M", gmtime);
 my $band = undef;
 my $mode = undef;
+my $mycall = undef;
+my $oper = undef;
 my @bands = ("630m", "160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m", "6m", "4m", "2m", "70cm");
 my @modes = ("SSB", "CW", "RTTY", "PSK31", "FM", "AM", "PHONE", "DATA");
 my @qsos;
@@ -76,8 +78,14 @@ while (<>) {
 			$mode = $tmp;
 			print STDERR "mode set: $mode\n" unless defined($quiet);
 		}
+	} elsif (m|^\s*oper\s+([A-Z0-9/]+)|i) {
+		$oper = uc $1;
+		print STDERR "oper set: $oper\n" unless defined($quiet);
+	} elsif (m|^\s*mycall\s+([A-Z0-9/]+)|i) {
+		$mycall = uc $1;
+		print STDERR "mycall set: $mycall\n" unless defined($quiet);
 	} elsif (/\s*(delete|drop|error)/i) {
-		my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $comment) =
+		my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $oper, $comment) =
 			split(/\|/, pop(@qsos));
 		print STDERR "deleted qso: $date $time $call $band $mode\n"
 			unless defined($quiet);
@@ -122,8 +130,10 @@ while (<>) {
 		$myrst =~ s/^@//;
 		$comment =~ s/^#//;
 
-		print STDERR "qso: $date $time $call $band $mode $sentrst $myrst $comment\n" unless defined($quiet);
-		push(@qsos, join('|', $date, $time, $call, $band, $mode, $sentrst, $myrst, $comment));
+		print STDERR "qso: $date $time $call $band $mode $sentrst $myrst $mycall $oper $comment\n" unless defined($quiet);
+		push(@qsos, join('|', $date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $oper, $comment));
+	} else {
+		print STDERR "unknown input: $_\n";
 	}
 }
 
@@ -132,16 +142,18 @@ print "Log file transcribed by fastlog. https://github.com/cruvolo/fastlog\n";
 print "<ADIF_VER:4>1.00\n<EOH>\n";
 foreach(@qsos) {
 	#print "$_\n";
-	my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $comment) =
+	my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $oper, $comment) =
 		split/\|/;
 	$date =~ s/-//g;
-	print "<QSO_DATE:8>", $date, " <TIME_ON:4>$time <CALL:",
-		length(uc($call)), ">", uc($call), " <BAND:",
-		length(uc($band)), ">", uc($band), " <MODE:",
-		length(uc($mode)), ">", uc($mode), " <RST_SENT:",
-		length($sentrst), ">", $sentrst,
-		(length($myrst)==0)?"":(" <RST_RCVD:".length($myrst).">".$myrst),
-		(length($comment)==0)?"":(" <COMMENT:".length($comment).">".$comment),
-		"\n<EOR>\n";
+	print "<QSO_DATE:8>", $date, " <TIME_ON:4>$time",
+	      " <CALL:", length(uc($call)), ">", uc($call),
+	      " <BAND:", length(uc($band)), ">", uc($band),
+	      " <MODE:", length(uc($mode)), ">", uc($mode),
+	      " <RST_SENT:", length($sentrst), ">", $sentrst,
+	      (length $mycall==0)?"":(" <STATION_CALLSIGN:".length($mycall).">".$mycall),
+	      (length $oper==0)?"":(" <OPERATOR:".length($oper).">".$oper),
+	      (length($myrst)==0)?"":(" <RST_RCVD:".length($myrst).">".$myrst),
+	      (length($comment)==0)?"":(" <COMMENT:".length($comment).">".$comment),
+	      "\n<EOR>\n";
 }
 
