@@ -21,6 +21,11 @@ mycall <callsign>
 Sets the callsign that was used on the air.
 
 ```
+mygrid <gridsquare>
+```
+Sets the grid square the station was operating from.
+
+```
 band <wavelength>
 ```
 Sets the band for new entries.  Accepted bands: 630m, 160m, 80m, 60m, 40m, 30m,

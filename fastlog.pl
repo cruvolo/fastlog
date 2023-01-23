@@ -4,7 +4,7 @@
 #
 # 2-clause BSD license.
 
-# Copyright 2014,2022 Chris Ruvolo (K2CR). All rights reserved.
+# Copyright 2014,2022,2023 Chris Ruvolo (K2CR). All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -43,6 +43,7 @@ my $time = strftime("%H%M", gmtime);
 my $band = undef;
 my $mode = undef;
 my $mycall = undef;
+my $mygrid = undef;
 my $oper = undef;
 my @bands = ("630m", "160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m", "6m", "4m", "2m", "70cm");
 my @modes = ("SSB", "CW", "RTTY", "PSK31", "FM", "AM", "PHONE", "DATA");
@@ -84,6 +85,9 @@ while (<>) {
 	} elsif (m|^\s*mycall\s+([A-Z0-9/]+)|i) {
 		$mycall = uc $1;
 		print STDERR "mycall set: $mycall\n" unless defined($quiet);
+	} elsif (m|^\s*mygrid\s+([A-R]{2}[0-9]{2}([a-x]{2})?)|i) {
+		$mygrid = $1;
+		print STDERR "mygrid set: $mygrid\n" unless defined($quiet);
 	} elsif (/\s*(delete|drop|error)/i) {
 		my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $oper, $comment, $siginfo) = split(/\|/, pop(@qsos));
 		print STDERR "deleted qso: $date $time $call $band $mode\n"
@@ -126,6 +130,8 @@ while (<>) {
 		}
 		$myrst = "" unless defined $myrst;
 		$comment = "" unless defined $comment;
+		$mygrid = "" unless defined $mygrid;
+		$oper = "" unless defined $oper;
 		$myrst =~ s/^@//;
 		$comment =~ s/^#//;
 
@@ -134,8 +140,8 @@ while (<>) {
 		  $siginfo = $2;
 		}
 
-		print STDERR "qso: $date $time $call $band $mode $sentrst $myrst $mycall $oper $comment $siginfo\n" unless defined($quiet);
-		push(@qsos, join('|', $date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $oper, $comment, $siginfo));
+		print STDERR "qso: $date $time $call $band $mode $sentrst $myrst $mycall $mygrid $oper $comment $siginfo\n" unless defined($quiet);
+		push(@qsos, join('|', $date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $mygrid, $oper, $comment, $siginfo));
 	} else {
 		print STDERR "unknown input: $_\n";
 	}
@@ -146,7 +152,7 @@ print "Log file transcribed by fastlog. https://github.com/cruvolo/fastlog\n";
 print "<ADIF_VER:5>2.1.4\n<EOH>\n";
 foreach(@qsos) {
 	#print "$_\n";
-	my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $oper, $comment, $siginfo) = split/\|/;
+	my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $mygrid, $oper, $comment, $siginfo) = split/\|/;
 	$date =~ s/-//g;
 	print "<QSO_DATE:8>", $date, " <TIME_ON:4>$time",
 	      " <CALL:", length(uc($call)), ">", uc($call),
@@ -154,6 +160,7 @@ foreach(@qsos) {
 	      " <MODE:", length(uc($mode)), ">", uc($mode),
 	      " <RST_SENT:", length($sentrst), ">", $sentrst,
 	      (length $mycall==0)?"":(" <STATION_CALLSIGN:".length($mycall).">".$mycall),
+	      (length $mygrid==0)?"":(" <MY_GRIDSQUARE:".length($mygrid).">".$mygrid),
 	      (length $oper==0)?"":(" <OPERATOR:".length($oper).">".$oper),
 	      (length($myrst)==0)?"":(" <RST_RCVD:".length($myrst).">".$myrst),
 	      (length($siginfo)==0)?"":(" <SIG_INFO:".length($siginfo).">".$siginfo),
