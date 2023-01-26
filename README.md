@@ -77,6 +77,18 @@ Example:
   48 KA1DMA 59 @55 # PTP K-1073
 ```
 
+## Gridsquare support for VHF or Satellites
+
+If a QSO comment has a valid 4 or 6 digit gridsquare, that grid square will be recorded in the ADIF `<GRIDSQUARE` field.
+
+Example:
+
+```
+1946 WB2AMU # FN30
+1958 KN3B   # FN11
+2010 N1DPM  # FN32 MA
+```
+
 ## execution
 
 The script accepts a -q or --quiet option.  It can be run interactively or

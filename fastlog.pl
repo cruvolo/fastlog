@@ -104,6 +104,7 @@ while (<>) {
 		my $sentrst = $3;
 		my $myrst = $4;
 		my $comment = $5;
+		my $grid = "";
 		$comment =~ s/^#\s*/#/ if defined $comment;
 		$comment =~ s/\s*$// if defined $comment;
 
@@ -139,9 +140,12 @@ while (<>) {
 		if ($comment =~ m/(POTA|PTP)\s+([A-Z0-9]+-\d+)/) {
 		  $siginfo = $2;
 		}
+		if ($comment =~ m/\b([A-R]{2}[0-9]{2}([a-x]{2})?)\b/i) {
+		  $grid = $1;
+		}
 
-		print STDERR "qso: $date $time $call $band $mode $sentrst $myrst $mycall $mygrid $oper $comment $siginfo\n" unless defined($quiet);
-		push(@qsos, join('|', $date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $mygrid, $oper, $comment, $siginfo));
+		print STDERR "qso: $date $time $call $band $mode $sentrst $myrst $grid $mycall $mygrid $oper $comment $siginfo\n" unless defined($quiet);
+		push(@qsos, join('|', $date, $time, $call, $band, $mode, $sentrst, $myrst, $grid, $mycall, $mygrid, $oper, $comment, $siginfo));
 	} else {
 		print STDERR "unknown input: $_\n";
 	}
@@ -152,7 +156,7 @@ print "Log file transcribed by fastlog. https://github.com/cruvolo/fastlog\n";
 print "<ADIF_VER:5>2.1.4\n<EOH>\n";
 foreach(@qsos) {
 	#print "$_\n";
-	my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $mygrid, $oper, $comment, $siginfo) = split/\|/;
+	my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $grid, $mycall, $mygrid, $oper, $comment, $siginfo) = split/\|/;
 	$date =~ s/-//g;
 	print "<QSO_DATE:8>", $date, " <TIME_ON:4>$time",
 	      " <CALL:", length(uc($call)), ">", uc($call),
@@ -163,6 +167,7 @@ foreach(@qsos) {
 	      (length $mygrid==0)?"":(" <MY_GRIDSQUARE:".length($mygrid).">".$mygrid),
 	      (length $oper==0)?"":(" <OPERATOR:".length($oper).">".$oper),
 	      (length($myrst)==0)?"":(" <RST_RCVD:".length($myrst).">".$myrst),
+	      (length($grid)==0)?"":(" <GRIDSQUARE:".length($grid).">".$grid),
 	      (length($siginfo)==0)?"":(" <SIG_INFO:".length($siginfo).">".$siginfo),
 	      (length($comment)==0)?"":(" <COMMENT:".length($comment).">".$comment),
 	      "\n<EOR>\n";
