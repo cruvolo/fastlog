@@ -158,16 +158,16 @@ foreach(@qsos) {
 	#print "$_\n";
 	my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $grid, $mycall, $mygrid, $oper, $comment, $siginfo) = split/\|/;
 	$date =~ s/-//g;
-	print "<QSO_DATE:8>", $date, " <TIME_ON:4>$time",
-	      " <CALL:", length(uc($call)), ">", uc($call),
-	      " <BAND:", length(uc($band)), ">", uc($band),
+	print "<BAND:", length(uc($band)), ">", uc($band),
 	      " <MODE:", length(uc($mode)), ">", uc($mode),
-	      " <RST_SENT:", length($sentrst), ">", $sentrst,
+	      " <QSO_DATE:8>", $date, " <TIME_ON:4>$time",
 	      (length $mycall==0)?"":(" <STATION_CALLSIGN:".length($mycall).">".$mycall),
+	      " <RST_SENT:", length($sentrst), ">", $sentrst,
 	      (length $mygrid==0)?"":(" <MY_GRIDSQUARE:".length($mygrid).">".$mygrid),
-	      (length $oper==0)?"":(" <OPERATOR:".length($oper).">".$oper),
+	      " <CALL:", length(uc($call)), ">", uc($call),
 	      (length($myrst)==0)?"":(" <RST_RCVD:".length($myrst).">".$myrst),
 	      (length($grid)==0)?"":(" <GRIDSQUARE:".length($grid).">".$grid),
+	      (length $oper==0)?"":(" <OPERATOR:".length($oper).">".$oper),
 	      (length($siginfo)==0)?"":(" <SIG_INFO:".length($siginfo).">".$siginfo),
 	      (length($comment)==0)?"":(" <COMMENT:".length($comment).">".$comment),
 	      "\n<EOR>\n";
