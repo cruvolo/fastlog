@@ -129,6 +129,7 @@ while (<>) {
 		} else {
 			$sentrst = "599" unless defined $sentrst;
 		}
+		$mycall = "" unless defined $mycall;
 		$myrst = "" unless defined $myrst;
 		$comment = "" unless defined $comment;
 		$mygrid = "" unless defined $mygrid;
