@@ -41,6 +41,7 @@ use POSIX qw(strftime);
 my $date = strftime("%Y-%m-%d", gmtime);
 my $time = strftime("%H%M", gmtime);
 my $band = undef;
+my $freq = undef;
 my $mode = undef;
 my $mycall = undef;
 my $mygrid = undef;
@@ -72,6 +73,8 @@ while (<>) {
 		if (grep { /$tmp/i } @bands) {
 			$band = $tmp;
 			print STDERR "band set: $band\n" unless defined ($quiet);
+			print STDERR "freq cleared\n" if defined $freq and not defined $quiet;
+			$freq = undef if defined $freq;
 		};
 	} elsif (/^\s*mode\s+(\w+)/i) {
 		my $tmp = $1;
@@ -88,25 +91,37 @@ while (<>) {
 	} elsif (m|^\s*mygrid\s+([A-R]{2}[0-9]{2}([a-x]{2})?)|i) {
 		$mygrid = $1;
 		print STDERR "mygrid set: $mygrid\n" unless defined($quiet);
+	} elsif (m|^\s*(freq)?\s*([0-9]+\.[0-9]+)|i) {
+		$freq = $2;
+		my $b = getBandForFreq($freq);
+		$band = $b if defined $b;
+		print STDERR "band set: $band\n" if defined $b and not defined($quiet);
+		print STDERR "freq set: $freq\n" unless defined($quiet);
 	} elsif (/\s*(delete|drop|error)/i) {
 		my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $mycall, $oper, $comment, $siginfo) = split(/\|/, pop(@qsos));
 		print STDERR "deleted qso: $date $time $call $band $mode\n"
 			unless defined($quiet);
-	} elsif (m|^\s*(\d{0,4})?\s*([A-Z0-9/]{3,})\s*(\d{2,3})?\s*(@\d{2,3})?\s*(#.*)?$|i) {
-		# 51 dl4mcf 579 @559 #good contact
+	} elsif (m|^\s*(\d{0,4})?\s*([0-9]+\.[0-9]+)?\s*([A-Z0-9/]{3,})\s*(\d{2,3})?\s*(@\d{2,3})?\s*(#.*)?$|i) {
+		# 51 3.515 dl4mcf 579 @559 #good contact
 		# 1: 51
-		# 2: dl4mcf
-		# 3: 579
-		# 4: @559
-		# 5: #good contact
+		# 2: 3.515
+		# 3: dl4mcf
+		# 4: 579
+		# 5: @559
+		# 6: #good contact
 		my $timefrag = $1;
-		my $call = $2;
-		my $sentrst = $3;
-		my $myrst = $4;
-		my $comment = $5;
+		my $qsofreq = $2;
+		my $call = uc $3;
+		my $sentrst = $4;
+		my $myrst = $5;
+		my $comment = $6;
 		my $grid = "";
 		$comment =~ s/^#\s*/#/ if defined $comment;
 		$comment =~ s/\s*$// if defined $comment;
+
+		my $b = getBandForFreq($qsofreq) if defined $qsofreq;
+		$band = $b if defined $b;
+		$qsofreq = $freq if defined $freq and not defined $qsofreq;
 
 		if (!defined($band)) {
 			print STDERR "error: band must be set.\n";
@@ -134,6 +149,7 @@ while (<>) {
 		$comment = "" unless defined $comment;
 		$mygrid = "" unless defined $mygrid;
 		$oper = "" unless defined $oper;
+		$qsofreq = "" unless defined $qsofreq;
 		$myrst =~ s/^@//;
 		$comment =~ s/^#//;
 
@@ -145,8 +161,8 @@ while (<>) {
 		  $grid = $1;
 		}
 
-		print STDERR "qso: $date $time $call $band $mode $sentrst $myrst $grid $mycall $mygrid $oper $comment $siginfo\n" unless defined($quiet);
-		push(@qsos, join('|', $date, $time, $call, $band, $mode, $sentrst, $myrst, $grid, $mycall, $mygrid, $oper, $comment, $siginfo));
+		print STDERR "qso: $date $time $call $qsofreq $band $mode $sentrst $myrst $grid $mycall $mygrid $oper $comment $siginfo\n" unless defined($quiet);
+		push(@qsos, join('|', $date, $time, $call, $qsofreq, $band, $mode, $sentrst, $myrst, $grid, $mycall, $mygrid, $oper, $comment, $siginfo));
 	} else {
 		print STDERR "unknown input: $_\n";
 	}
@@ -157,15 +173,16 @@ print "Log file transcribed by fastlog. https://github.com/cruvolo/fastlog\n";
 print "<ADIF_VER:5>2.1.4\n<EOH>\n";
 foreach(@qsos) {
 	#print "$_\n";
-	my ($date, $time, $call, $band, $mode, $sentrst, $myrst, $grid, $mycall, $mygrid, $oper, $comment, $siginfo) = split/\|/;
+	my ($date, $time, $call, $qsofreq, $band, $mode, $sentrst, $myrst, $grid, $mycall, $mygrid, $oper, $comment, $siginfo) = split/\|/;
 	$date =~ s/-//g;
 	print "<BAND:", length(uc($band)), ">", uc($band),
+	      (length($qsofreq)==0)?"":(" <FREQ:".length($qsofreq).">".$qsofreq),
 	      " <MODE:", length(uc($mode)), ">", uc($mode),
 	      " <QSO_DATE:8>", $date, " <TIME_ON:4>$time",
 	      (length $mycall==0)?"":(" <STATION_CALLSIGN:".length($mycall).">".$mycall),
 	      " <RST_SENT:", length($sentrst), ">", $sentrst,
 	      (length $mygrid==0)?"":(" <MY_GRIDSQUARE:".length($mygrid).">".$mygrid),
-	      " <CALL:", length(uc($call)), ">", uc($call),
+	      " <CALL:", length($call), ">", $call,
 	      (length($myrst)==0)?"":(" <RST_RCVD:".length($myrst).">".$myrst),
 	      (length($grid)==0)?"":(" <GRIDSQUARE:".length($grid).">".$grid),
 	      (length $oper==0)?"":(" <OPERATOR:".length($oper).">".$oper),
@@ -174,3 +191,29 @@ foreach(@qsos) {
 	      "\n<EOR>\n";
 }
 
+
+sub getBandForFreq {
+  my $f = shift;
+
+  return undef if not defined $f or $f == 0.0;
+
+  return "2200m" if $f >= 0.1357 and $f <= 0.1378;
+  return "630m" if $f >= 0.472 and $f <= 0.479;
+  return "160m" if $f >= 1.8 and $f <= 2.0;
+  return "80m" if $f >= 3.5 and $f <= 4.0;
+  return "60m" if $f >= 5.06 and $f <= 5.45;
+  return "40m" if $f >= 7.0 and $f <= 7.3;
+  return "30m" if $f >= 10.1 and $f <= 10.15;
+  return "20m" if $f >= 14.0 and $f <= 14.35;
+  return "17m" if $f >= 18.068 and $f <= 18.168;
+  return "15m" if $f >= 21.0 and $f <= 21.45;
+  return "12m" if $f >= 24.890 and $f <= 24.99;
+  return "10m" if $f >= 28.0 and $f <= 29.7;
+  return "6m" if $f >= 50.0 and $f <= 54.0;
+  return "4m" if $f >= 70.0 and $f <= 71.0;
+  return "2m" if $f >= 144.0 and $f <= 148.0;
+  return "70cm" if $f >= 420.0 and $f <= 450.0;
+
+  print STDERR "ERROR: unknown band for frequency $f\n";
+  return undef;
+}
